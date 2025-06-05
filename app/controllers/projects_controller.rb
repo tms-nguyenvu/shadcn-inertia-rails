@@ -1,7 +1,5 @@
-class ProjectsController < ApplicationController
+class ProjectsController < InertiaController
   before_action :set_project, only: %i[ show edit update destroy ]
-
-  inertia_share flash: -> { flash.to_hash }
 
   # GET /projects
   def index

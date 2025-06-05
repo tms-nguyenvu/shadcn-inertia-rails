@@ -11,28 +11,22 @@ type ResolvedComponent = {
 
 createInertiaApp({
   // Set default page title
-  // see https://inertia-rails.dev/guide/title-and-meta
-  //
-  // title: title => title ? `${title} - App` : 'App',
+  title: title => title ? `${title} - App` : 'App',
 
   // Disable progress bar
-  //
-  // see https://inertia-rails.dev/guide/progress-indicators
   // progress: false,
 
-  resolve: (name) => {
-    const pages = import.meta.glob<ResolvedComponent>('../pages/**/*.tsx', {
-      eager: true,
-    })
-    const page = pages[`../pages/${name}.tsx`]
-    if (!page) {
+  resolve: async (name) => {
+    const pages = import.meta.glob<ResolvedComponent>('../pages/**/*.tsx')
+    const importPage = pages[`../pages/${name}.tsx`]
+
+    if (!importPage) {
       console.error(`Missing Inertia page component: '${name}.tsx'`)
+      return null
     }
 
-    // To use a default layout, import the Layout component
-    // and use the following line.
-    // see https://inertia-rails.dev/guide/pages#default-layouts
-    //
+    const page = await importPage()
+    // If you want to use a default layout, uncomment the following line:
     // page.default.layout ||= (page) => page
 
     return page.default
@@ -44,7 +38,7 @@ createInertiaApp({
       root.render(
         <>
           {createElement(App, props)}
-          < Toaster richColors />
+          <Toaster richColors />
         </>
       )
     } else {
